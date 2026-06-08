@@ -1,0 +1,8 @@
+folium>=0.16
+geopandas>=0.14
+plotly>=5.18
+pandas>=2.0
+numpy>=1.24
+requests>=2.31
+branca>=0.7
+pytest>=7.0

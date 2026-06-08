@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.venv/
+.pytest_cache/
+data/geojson/*.geojson
+data/geojson/*.json
+data/*.csv
+outputs/maps/*.html

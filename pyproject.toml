@@ -1,0 +1,11 @@
+[project]
+name = "uk-choropleth-maps"
+version = "0.1.0"
+description = "Interactive choropleth maps of UK Local Authority statistics using Folium and Plotly"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
