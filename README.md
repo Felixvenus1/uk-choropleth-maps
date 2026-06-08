@@ -6,30 +6,47 @@ Maps are exported as self-contained `.html` files — download and open locally,
 
 ## Maps Produced
 
+Three different English deprivation metrics (IMD 2019 domain scores), all keyed on
+the LA district code, plus a Plotly Express comparison:
+
 | Map | Metric | Tool | Output |
 |---|---|---|---|
-| Index of Multiple Deprivation | IMD Score (2019) | Folium | `outputs/maps/imd_map.html` |
-| Median Household Income | £ per year (2020) | Folium | `outputs/maps/income_map.html` |
-| Unemployment Rate | % (2022) | Folium + Plotly | `outputs/maps/unemployment_map.html` |
+| Index of Multiple Deprivation | IMD average score | Folium | `outputs/maps/imd_map.html` |
+| Income deprivation | Income domain score | Folium | `outputs/maps/income_map.html` |
+| Employment deprivation | Employment domain score | Folium | `outputs/maps/employment_map.html` |
+| IMD (comparison) | IMD average score | Plotly Express | `outputs/maps/imd_plotly.html` |
+
+Boundaries are ONS December 2022 Local Authority Districts (UK), generalised on the
+fly so each self-contained HTML stays small.
+
+### Previews
+
+| IMD | Income | Employment |
+|---|---|---|
+| ![IMD](docs/previews/imd_preview.png) | ![Income](docs/previews/income_preview.png) | ![Employment](docs/previews/employment_preview.png) |
 
 ## Quick Start
 
 ```bash
 pip install -r requirements.txt
 
-# Download GeoJSON + metric CSVs from ONS
+# Download the ONS boundary GeoJSON + IMD 2019 workbook
 python data/download_data.py
 
-# Run the notebook
+# Run the notebook (regenerates all four HTML maps)
 jupyter lab notebooks/map_exploration.ipynb
 
-# Or run the builder directly
+# Or use the builder directly
 python -c "
-from src.choropleth_builder import ChoroplethBuilder
 import pandas as pd
-df = pd.read_csv('data/imd_2019.csv')
-m = ChoroplethBuilder('data/geojson/local_authorities.geojson', df, join_key='lad19cd').build(column='imd_score', legend_name='IMD Score')
-m.save('outputs/maps/imd_map.html')
+from src.choropleth_builder import ChoroplethBuilder
+imd = pd.read_excel('data/imd_2019.xlsx', sheet_name='IMD')
+imd.columns = [c.strip() for c in imd.columns]
+df = imd[['Local Authority District code (2019)', 'IMD - Average score']]
+df.columns = ['LAD22CD', 'imd_score']
+b = ChoroplethBuilder('data/geojson/local_authorities_2022.geojson', df, join_key='LAD22CD')
+b.build(column='imd_score', legend_name='IMD Score')
+b.save('outputs/maps/imd_map.html')
 "
 ```
 
@@ -57,10 +74,11 @@ folium_map.save("outputs/maps/imd_map.html")
 
 | Dataset | Source | Licence |
 |---|---|---|
-| Local Authority GeoJSON (2019) | ONS Open Geography Portal | OGL v3 |
-| Index of Multiple Deprivation 2019 | MHCLG / data.gov.uk | OGL v3 |
-| Median Household Income 2020 | ONS | OGL v3 |
-| Unemployment Rate 2022 | ONS NOMIS | OGL v3 |
+| Local Authority Districts (Dec 2022, UK) GeoJSON | ONS Open Geography Portal | OGL v3 |
+| Index of Multiple Deprivation 2019 (LA summaries) | MHCLG / data.gov.uk | OGL v3 |
+
+The IMD workbook's per-domain sheets (`IMD`, `Income`, `Employment`) supply the three
+mapped metrics. IMD 2019 covers England only, so non-English authorities render grey.
 
 ## Project Structure
 

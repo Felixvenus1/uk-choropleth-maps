@@ -14,17 +14,13 @@ GEOJSON_URL = (
     "?where=1%3D1&outFields=LAD22CD,LAD22NM&outSR=4326&f=geojson"
 )
 
-# ONS IMD 2019 — England only; England LA scores from MHCLG
+# MHCLG / ONS IMD 2019 — Local Authority District summaries (England).
+# The workbook has one sheet per deprivation domain (IMD, Income, Employment, ...),
+# from which the notebook builds three different choropleth metrics.
 IMD_URL = (
     "https://assets.publishing.service.gov.uk/government/uploads/"
     "system/uploads/attachment_data/file/833995/"
     "File_10_-_IoD2019_Local_Authority_District_Summaries__lower-tier__.xlsx"
-)
-
-# NOMIS claimant count Apr-2023 (local authority, all persons)
-UNEMPLOYMENT_URL = (
-    "https://www.nomisweb.co.uk/api/v01/dataset/NM_162_1.data.csv"
-    "?geography=TYPE432&date=2023-04&sex=7&age=0&measure=1&measures=20100"
 )
 
 
@@ -48,9 +44,6 @@ def main() -> None:
 
     print("Fetching IMD 2019 summary (XLSX) ...")
     _download(IMD_URL, DATA_DIR / "imd_2019.xlsx")
-
-    print("Fetching unemployment claimant count (CSV) ...")
-    _download(UNEMPLOYMENT_URL, DATA_DIR / "unemployment_2023.csv")
 
     print("Done. Run the notebook to generate maps.")
 
